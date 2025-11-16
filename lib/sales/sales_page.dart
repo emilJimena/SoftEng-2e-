@@ -136,25 +136,35 @@ class _SalesContentState extends State<SalesContent> {
       ..addAll(todayOrders);
   }
 
-  Future<void> _pickDate(BuildContext context, bool isStart) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: isStart
-          ? (startDate ?? DateTime.now())
-          : (endDate ?? DateTime.now()),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() {
-        if (isStart) {
-          startDate = picked;
-        } else {
-          endDate = picked;
+Future<void> _pickDate(BuildContext context, bool isStart) async {
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: isStart
+        ? (startDate ?? DateTime.now())
+        : (endDate ?? DateTime.now()),
+    firstDate: DateTime(2020),
+    lastDate: DateTime(2100),
+  );
+
+  if (picked != null) {
+    setState(() {
+      if (isStart) {
+        startDate = picked;
+        // If "To" is null or before start, default it to today
+        if (endDate == null || endDate!.isBefore(picked)) {
+          endDate = DateTime.now();
         }
-      });
-    }
+      } else {
+        endDate = picked;
+        // If "From" is null or after end, default it to start of month
+        if (startDate == null || startDate!.isAfter(picked)) {
+          startDate = picked;
+        }
+      }
+    });
   }
+}
+
 
   double _calculateOrderTotal(Map<String, dynamic> order) {
     double total = 0;
@@ -701,26 +711,19 @@ class _SalesContentState extends State<SalesContent> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          startDate == null && endDate == null
-                              ? DateFormat('MMM d, yyyy').format(
-                                  DateTime.now(),
-                                ) // show today by default
-                              : startDate != null && endDate != null
-                              ? "${DateFormat('MMM d, yyyy').format(startDate!)} - ${DateFormat('MMM d, yyyy').format(endDate!)}"
-                              : startDate != null
-                              ? DateFormat('MMM d, yyyy').format(startDate!)
-                              : endDate != null
-                              ? DateFormat('MMM d, yyyy').format(endDate!)
-                              : DateFormat(
-                                  'MMM d, yyyy',
-                                ).format(DateTime.now()),
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
+Text(
+  startDate != null && endDate != null
+      ? "${DateFormat('MMM d, yyyy').format(startDate!)} - ${DateFormat('MMM d, yyyy').format(endDate!)}"
+      : startDate != null
+          ? "${DateFormat('MMM d, yyyy').format(startDate!)} - ${DateFormat('MMM d, yyyy').format(DateTime.now())}"
+          : DateFormat('MMM d, yyyy').format(DateTime.now()),
+  style: GoogleFonts.poppins(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: Colors.black87,
+  ),
+),
+
 
                         const SizedBox(height: 10),
                         Row(
