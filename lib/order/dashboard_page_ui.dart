@@ -833,18 +833,13 @@ class MenuGrid extends StatelessWidget {
                       displayWidget,
 
                       const SizedBox(height: 4),
-Expanded(
-  child: SingleChildScrollView(
-    child: Text(
+    Text(
       description,
       style: GoogleFonts.poppins(
         fontSize: 15,
         color: Colors.white70,
       ),
-      softWrap: true,
     ),
-  ),
-),
 
                       const Spacer(),
                       Text(
