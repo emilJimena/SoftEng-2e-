@@ -300,18 +300,28 @@ class _MaterialDetailsPageState extends State<MaterialDetailsPage> {
 pw.Text(
   () {
     if (startDate != null && endDate != null) {
+      // Same day
       if (DateFormat('yyyyMMdd').format(startDate!) ==
           DateFormat('yyyyMMdd').format(endDate!)) {
         return "Date: ${DateFormat('MMM d, yyyy').format(startDate!)}";
       } else {
+        // Different start and end dates
         return "Date Range: ${DateFormat('MMM d, yyyy').format(startDate!)} - ${DateFormat('MMM d, yyyy').format(endDate!)}";
       }
+    } else if (startDate != null) {
+      // Only start date
+      return "Date: ${DateFormat('MMM d, yyyy').format(startDate!)}";
+    } else if (endDate != null) {
+      // Only end date
+      return "Date: ${DateFormat('MMM d, yyyy').format(endDate!)}";
     } else {
+      // No date filter
       return "Date: All";
     }
   }(),
   style: const pw.TextStyle(fontSize: 14),
 ),
+
 
             pw.SizedBox(height: 16),
             // Grouped logs by date
